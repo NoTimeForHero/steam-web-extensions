@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Steam Web Extensions
-// @namespace    http://github.com/notimeforhero/
-// @version      0.1
+// @namespace    http://github.com/NoTimeForHero/steam-web-extensions/
+// @version      0.0.1
 // @description  Some useful extensions for Steam
 // @author       You
 // @match        https://steamcommunity.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=steamcommunity.com
-// @require      http://127.0.0.1:8080/assets/index.js
-// @resource     IMPORTED_CSS http://127.0.0.1:8080/assets/index.css
+// @require      https://raw.githubusercontent.com/NoTimeForHero/steam-web-extensions/master/dist/index.js
+// @resource     IMPORTED_CSS https://raw.githubusercontent.com/NoTimeForHero/steam-web-extensions/master/dist/index.css
 // @grant      GM_getResourceText
 // @grant      GM_addStyle
 // ==/UserScript==
