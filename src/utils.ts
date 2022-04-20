@@ -8,4 +8,7 @@ export const getDocument = async(url: string, debugUrl: string) => {
 }
 
 export const wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
+
 export const relativeURL = (url: string) => new URL(url).pathname
+
+export const notEmpty= <TValue>(value: TValue | null | undefined): value is TValue => { return value !== null && value !== undefined;}

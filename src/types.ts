@@ -18,3 +18,7 @@ export interface AppState {
   error: unknown,
   setError: (value: unknown) => void,
 }
+
+export interface ExtendedWindow extends Window {
+  sha1?: (input: string) => string,
+}

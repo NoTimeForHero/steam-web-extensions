@@ -1,11 +1,9 @@
-import {getDocument} from "../../utils";
+import {getDocument, notEmpty} from "../../utils";
+import {ExtendedWindow} from "../../types";
+declare let window: ExtendedWindow;
 
 export interface IGameInfo {
-  player: {
-    url: string,
-    name?: string,
-    avatar?: string,
-  },
+  player: IWhoPlayed,
   achievements: IAchievement[],
 }
 
@@ -17,9 +15,9 @@ export interface IAchievement {
 }
 
 export interface IWhoPlayed {
+  url: string,
   name?: string,
   avatar?: string,
-  link?: string,
 }
 
 export const getGameInfo = async(gameId: string) : Promise<IGameInfo> => {
@@ -53,7 +51,17 @@ export const getFriendsThatPlay = async(userPrefix: string, gameId: string) : Pr
     .map((entry) => ({
       name: entry.querySelector('.friendBlockContent')?.firstChild?.textContent?.trim(),
       avatar: entry.querySelector<HTMLImageElement>('.playerAvatar img')?.src,
-      link: entry.querySelector<HTMLAnchorElement>('.friendBlockInnerLink')?.href
+      url: entry.querySelector<HTMLAnchorElement>('.friendBlockInnerLink')?.href!
     }))
-    .filter((obj) => obj.link?.match('/stats/\\d+/compare$'))
+    .filter((obj) => obj.url?.match('/stats/\\d+/compare$'))
+}
+
+export const getFriendAchievements = async(friend: IWhoPlayed) : Promise<Set<string>> => {
+  const filename = window.sha1?.call(null, friend.name ?? friend.url) + '.html';
+  const ajaxDocument = await getDocument(friend.url, `/debug/achievements/users/${filename}`);
+  const titles = [...ajaxDocument.querySelectorAll('.achieveRow')]
+    .filter((row) => row.querySelector('.achieveUnlockTime')?.firstChild?.textContent?.trim()?.length ?? 0 > 0)
+    .map((row) => row.querySelector<HTMLElement>('.achieveTxt .ellipsis')?.innerText)
+    .filter(notEmpty)
+  return new Set(titles);
 }

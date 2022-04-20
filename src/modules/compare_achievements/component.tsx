@@ -1,11 +1,11 @@
 import {FunctionalComponent} from "preact";
 import {useContext, useEffect, useState} from "preact/compat";
 import {AppContext, wrapLoading} from "../../components/app";
-import {IAchievement, getGameInfo, getFriendsThatPlay, IWhoPlayed} from "./tools";
+import {getGameInfo, getFriendsThatPlay, IWhoPlayed, getFriendAchievements} from "./tools";
 import styles from './component.module.scss';
 import {relativeURL} from "../../utils";
 
-const Entry : FunctionalComponent<{ach: IAchievement}> = (props) => {
+const Entry : FunctionalComponent<{ach: IDisplayAchievement}> = (props) => {
   const ach = props.ach;
   return <div className={styles.achievement}>
     <img src={ach.image} className={styles.image} alt="2" />
@@ -13,13 +13,28 @@ const Entry : FunctionalComponent<{ach: IAchievement}> = (props) => {
       <div className={styles.title}>{ach.title}</div>
       <div className={styles.description}>{ach.description}</div>
     </div>
+    <div className={styles.friends}>
+      {ach.friends.map((friend,index) => (
+        <a key={index} href={friend.url} title={friend.name}>
+          <img src={friend.avatar} alt="" className={styles.friend} />
+        </a>
+      ))}
+    </div>
   </div>
 }
+
+interface IDisplayAchievement {
+  title: string,
+  description?: string,
+  image?: string,
+  friends: IWhoPlayed[],
+}
+export type AchievementList = Record<string, IDisplayAchievement>;
 
 export const Component : FunctionalComponent = () => {
 
   const appCtx = useContext(AppContext);
-  const [achievements, setAchievements] = useState<IAchievement[]>([]);
+  const [achievements, setAchievements] = useState<AchievementList>({});
   const [players, setPlayers] = useState<IWhoPlayed[]>([]);
 
   const onInit = async() => {
@@ -30,15 +45,27 @@ export const Component : FunctionalComponent = () => {
     const gameInfo = await wrapLoading(appCtx, getGameInfo(gameId), 'Get game achievements...');
     if (!gameInfo) return;
 
-    const players = await wrapLoading(appCtx,
+    const friends = await wrapLoading(appCtx,
       getFriendsThatPlay(relativeURL(gameInfo.player.url), gameId),
       'Getting friends that play this game...');
-    if (!players) throw new Error('Impossible to find friends that play this game!');
+    if (!friends) throw new Error('Impossible to find friends that play this game!');
 
-    console.warn(players);
+    const transformedAchs = gameInfo.achievements.reduce((acc, el) => {
+      acc[el.title] = { ...el, friends: [] };
+      return acc;
+    }, {} as AchievementList);
+    gameInfo.achievements.filter((ach) => ach.unlocked).forEach((ach) => transformedAchs[ach.title]?.friends.push(gameInfo.player));
 
-    setPlayers(players);
-    setAchievements(gameInfo.achievements);
+    for (let i = 0; i < friends.length; i += 1) {
+      const friend = friends[i];
+      const status = `[${i+1}/${friends.length}] Loading player: ${friend.name}`;
+      const achievements = await wrapLoading(appCtx, getFriendAchievements(friend), status);
+      if (achievements) achievements.forEach((name) => transformedAchs[name]?.friends.push(friend));
+      console.log(achievements);
+    }
+
+    setPlayers(friends);
+    setAchievements(transformedAchs);
   }
 
   useEffect(() => { onInit().catch(appCtx.setError) }, []);
@@ -47,12 +74,12 @@ export const Component : FunctionalComponent = () => {
     <div>
       <h4 style="margin-bottom: 10px">Player with achievements:</h4>
       {players.map((player, index) => (
-        <a href={player.link} key={index} style="margin-right: 5px">
+        <a href={player.url} key={index} style="margin-right: 5px">
           <img src={player.avatar} alt="" title={player.name} />
         </a>
       ))}
       <h4 style="margin-bottom: 10px">Achievements: </h4>
-      {achievements.map((ach,index) => <Entry ach={ach} key={index} />)}
+      {Object.values(achievements).map((ach,index) => <Entry ach={ach} key={index} />)}
     </div>
   )
 }

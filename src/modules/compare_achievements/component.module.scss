@@ -4,7 +4,20 @@
   background: rgba(0, 0, 0, 0.5);
 
   & .image {
-    margin-right: 10px;
+    margin: auto 10px auto 0;
+    width: 64px;
+    height: 64px;
+  }
+
+  & .friends {
+    margin: auto 0;
+  }
+
+  & .friend {
+    width: 48px;
+    height: 48px;
+    margin: 0 5px;
+    border-radius: 12px;
   }
 }
 
