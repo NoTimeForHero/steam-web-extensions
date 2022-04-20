@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build-serve": "npx http-server --cors -c-1 dist",
     "preview": "vite preview"
   },
   "dependencies": {

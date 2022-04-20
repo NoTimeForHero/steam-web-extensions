@@ -5,6 +5,7 @@ export const module: IModule = {
   id: 'compare_achievements',
   name: 'Compare Achievements',
   description: 'Compare achievements between friend',
+  // TODO: Hook into multiple targets, not only /friendsthatplay/
   isEnabled: () => !!document.location.pathname.match('^/id/[^/]+/friendsthatplay/(\\d+)'),
   modifyDOM: (domId, onShow) => {
     const elem = document.createElement('a')

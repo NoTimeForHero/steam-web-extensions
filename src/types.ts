@@ -1,6 +1,6 @@
 import {FunctionalComponent} from "preact";
 
-export const IS_DEBUG = true; // TODO: брать из node.env?
+export const IS_DEBUG = import.meta.env.MODE === 'development';
 export const PROJECT_ID = 'notimeforhero_steam_web_extensions';
 
 export interface IModule {

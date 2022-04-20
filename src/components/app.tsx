@@ -16,7 +16,7 @@ export const AppContext = createContext<AppState>({
   setLoading: (_) => {}
 });
 
-export const wrapLoading = (state: AppState, someJob: Promise<any>, loading: string|undefined = undefined) => {
+export const wrapLoading = <T,>(state: AppState, someJob: Promise<T>, loading: string|undefined = undefined) => {
   state.setError(undefined);
   state.setLoading(loading ?? 'Get some data...');
   return someJob
