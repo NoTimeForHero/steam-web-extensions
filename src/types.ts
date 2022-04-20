@@ -1,5 +1,3 @@
-import {FunctionalComponent} from "preact";
-
 export const IS_DEBUG = import.meta.env.MODE === 'development';
 export const PROJECT_ID = 'notimeforhero_steam_web_extensions';
 
@@ -9,7 +7,7 @@ export interface IModule {
   description: string,
   isEnabled: () => boolean,
   modifyDOM: (domId: string, onShow: () => void) => void,
-  component: FunctionalComponent,
+  getComponent: () => JSX.Element,
 }
 
 export interface AppState {

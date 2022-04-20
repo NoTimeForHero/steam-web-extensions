@@ -1,5 +1,5 @@
 import {useContext} from "preact/compat";
-import {AppContext} from "./app";
+import {AppContext} from "./App";
 import styles from '../index.module.scss';
 
 const ErrorComponent = () => {

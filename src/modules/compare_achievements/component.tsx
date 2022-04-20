@@ -1,6 +1,6 @@
 import {FunctionalComponent} from "preact";
 import {useContext, useEffect, useState} from "preact/compat";
-import {AppContext, wrapLoading} from "../../components/app";
+import {AppContext, wrapLoading} from "../../components/App";
 import {getGameInfo, getFriendsThatPlay, IWhoPlayed, getFriendAchievements} from "./tools";
 import styles from './component.module.scss';
 import {relativeURL} from "../../utils";
@@ -31,7 +31,7 @@ interface IDisplayAchievement {
 }
 export type AchievementList = Record<string, IDisplayAchievement>;
 
-export const Component : FunctionalComponent = () => {
+export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
   const appCtx = useContext(AppContext);
   const [achievements, setAchievements] = useState<AchievementList>({});
@@ -39,7 +39,7 @@ export const Component : FunctionalComponent = () => {
 
   const onInit = async() => {
 
-    const gameId : string|undefined = [...(document.location.pathname.match('^/id/[^/]+/friendsthatplay/(\\d+)')??[])][1];
+    const gameId = props.gameId;
     if (!gameId) throw new Error('Missing gameId!');
 
     const gameInfo = await wrapLoading(appCtx, getGameInfo(gameId), 'Get game achievements...');

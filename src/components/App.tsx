@@ -30,7 +30,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
   const [loading, setLoading] = useState<string|undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
   const appState : AppState = { loading, setLoading, error, setError };
-  const ModuleComponent = useMemo(() => module?.component, [module]);
+  const ModuleComponent = useMemo(() => module?.getComponent(), [module]);
 
   useEffect(() => {
     props.modules.forEach((module) => {
@@ -56,7 +56,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
           </div>
           {loading && <Loading message={loading} /> }
           {error && <Error />}
-          {ModuleComponent && <ModuleComponent />}
+          {ModuleComponent}
         </div>}
       </div>
     </AppContext.Provider>
