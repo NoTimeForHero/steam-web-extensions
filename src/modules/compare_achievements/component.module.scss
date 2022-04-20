@@ -1,0 +1,19 @@
+.achievement {
+  display: flex;
+  margin: 10px 0;
+  background: rgba(0, 0, 0, 0.5);
+
+  & .image {
+    margin-right: 10px;
+  }
+}
+
+.blockText {
+  margin: auto 0;
+  font-size: 15px;
+  width: 600px;
+  & .title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+}
