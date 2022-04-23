@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Steam Web Extensions
 // @namespace    http://github.com/NoTimeForHero/steam-web-extensions/
-// @version      0.0.1
+// @version      0.0.2
 // @description  Some useful extensions for Steam
 // @author       You
 // @match        https://steamcommunity.com/*

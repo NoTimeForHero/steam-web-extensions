@@ -34,6 +34,8 @@ export type AchievementList = Record<string, IDisplayAchievement>;
 
 const logger = getLogger('CompareAchievements');
 
+// TODO: Normal CSS for "All games" Steam page with height more then 5000px
+// Make normal modal?
 export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
   const appCtx = useContext(AppContext);

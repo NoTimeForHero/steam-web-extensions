@@ -1,34 +1,16 @@
-import {IModule } from "../../types";
+import {IModule} from "../../types";
 import {Component} from "./component";
-import icons from '../../resources';
 import {getLogger} from "../../logging";
+import {addDropdownLink, DropdownTarget, makeButton} from "../tools";
 
 enum InjectCase {
   Unknown = 'Unknown',
   FriendsThatPlay = 'FriendsThatPlay',
   TotalAchievements = 'TotalAchievements',
+  AllGames = 'AllGames',
 }
 
 const logger = getLogger('CompareAchievements');
-
-const makeButton = (domId: string, onShow: () => void, caption: string) => {
-  const elem = document.createElement('div')
-  elem.id = domId;
-  elem.innerHTML = `
-      <a href="javascript:void(0)" class="btnv6_blue_hoverfade btn_medium">
-        <div style="display: flex; align-items: center; padding: 8px 15px;">
-          <div style="width: 32px; height: 32px; color: rgba(128, 255, 0, 0.7); margin-right: 5px">
-            ${icons.plugin}
-          </div>
-          <span>${caption}</span>
-        </div>
-      </a>
-    `;
-  elem.style.marginTop = '8px';
-  elem.style.marginBottom = '15px';
-  elem.addEventListener('click', onShow);
-  return elem;
-}
 
 class CompareAchievements implements IModule {
   // IModule
@@ -39,9 +21,10 @@ class CompareAchievements implements IModule {
   injectCase = InjectCase.Unknown;
   // Current
 
-  __onLocationMatch(caseName: InjectCase, regex: string|RegExp, gameIdGroup: number = 1) {
+  __onLocationMatch(caseName: InjectCase, regex: string|RegExp, gameIdGroup: number|undefined = 1) {
     const match = document.location.pathname.match(regex);
-    if (!match || !match[gameIdGroup]) return;
+    if (!match) return;
+    if (typeof gameIdGroup === 'number' && !match[gameIdGroup]) return;
     this.injectCase = caseName;
     this.gameId = match[gameIdGroup];
   }
@@ -50,6 +33,7 @@ class CompareAchievements implements IModule {
     this.__onLocationMatch(InjectCase.FriendsThatPlay, /^\/id\/[^/]+\/friendsthatplay\/(\d+)\/?$/);
     this.__onLocationMatch(InjectCase.TotalAchievements, /^\/stats\/(\d+)\/achievements\/?$/);
     this.__onLocationMatch(InjectCase.TotalAchievements, /^\/(?:id|profiles)\/[^\/]+\/stats\/(\d+)\/achievements\/?$/);
+    this.__onLocationMatch(InjectCase.AllGames, /^\/(?:id|profiles)\/[^\/]+\/(games)\//, undefined);
   }
 
   isEnabled() { return !!this.gameId }
@@ -71,6 +55,13 @@ class CompareAchievements implements IModule {
       case InjectCase.FriendsThatPlay:
         const button = makeButton(domId, onShow, 'Compare achievements');
         document.querySelector('#memberList')?.prepend(button);
+        break;
+      case InjectCase.AllGames:
+        addDropdownLink(DropdownTarget.Statistics, domId, (gameId) => {
+          logger.trace('Open gameID', gameId);
+          this.gameId = gameId;
+          onShow();
+        }, 'SWE: Compare achievements');
         break;
       default:
         throw new Error(`Unknown inject case: ${this.injectCase}`)
