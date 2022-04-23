@@ -1,14 +1,15 @@
 import {IModule } from "../../types";
 import {Component} from "./component";
 import icons from '../../resources';
+import {getLogger} from "../../logging";
 
 enum InjectCase {
-  Unknown,
-  FriendsThatPlay,
-  TotalAchievements
+  Unknown = 'Unknown',
+  FriendsThatPlay = 'FriendsThatPlay',
+  TotalAchievements = 'TotalAchievements',
 }
 
-console.warn('icons', icons);
+const logger = getLogger('CompareAchievements');
 
 class CompareAchievements implements IModule {
   // IModule
@@ -24,7 +25,6 @@ class CompareAchievements implements IModule {
     if (!match || !match[gameIdGroup]) return;
     this.injectCase = caseName;
     this.gameId = match[gameIdGroup];
-    console.warn(regex, gameIdGroup, this.gameId, [...(match??[])]);
   }
 
   constructor() {
@@ -35,6 +35,9 @@ class CompareAchievements implements IModule {
   isEnabled() { return !!this.gameId }
 
   modifyDOM(domId: string, onShow: () => void): void {
+    logger.trace('DOM modification in progress...');
+    logger.trace('Inject CASE:', this.injectCase);
+    logger.trace('Game ID:', this.gameId);
     const elem = document.createElement('a')
     elem.id = domId;
     elem.className = 'btnv6_blue_hoverfade btn_medium';

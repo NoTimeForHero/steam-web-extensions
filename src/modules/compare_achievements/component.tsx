@@ -4,6 +4,7 @@ import {AppContext, wrapLoading} from "../../components/App";
 import {getGameInfo, getFriendsThatPlay, IWhoPlayed, getFriendAchievements} from "./tools";
 import styles from './component.module.scss';
 import {relativeURL} from "../../utils";
+import {getLogger} from "../../logging";
 
 const Entry : FunctionalComponent<{ach: IDisplayAchievement}> = (props) => {
   const ach = props.ach;
@@ -31,6 +32,8 @@ interface IDisplayAchievement {
 }
 export type AchievementList = Record<string, IDisplayAchievement>;
 
+const logger = getLogger('CompareAchievements');
+
 export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
   const appCtx = useContext(AppContext);
@@ -44,11 +47,14 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
     const gameInfo = await wrapLoading(appCtx, getGameInfo(gameId), 'Get game achievements...');
     if (!gameInfo) return;
+    logger.debug('Player:', gameInfo.player.name?.trim());
+    logger.debug('Total achievements:', Object.keys(gameInfo.achievements).length);
 
     const friends = await wrapLoading(appCtx,
       getFriendsThatPlay(relativeURL(gameInfo.player.url), gameId),
       'Getting friends that play this game...');
     if (!friends) throw new Error('Impossible to find friends that play this game!');
+    logger.debug('Friends with this game:', friends.length);
 
     const transformedAchs = gameInfo.achievements.reduce((acc, el) => {
       acc[el.title] = { ...el, friends: [] };
@@ -59,9 +65,9 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
     for (let i = 0; i < friends.length; i += 1) {
       const friend = friends[i];
       const status = `[${i+1}/${friends.length}] Loading player: ${friend.name}`;
+      logger.trace('Loading friend:', friend.name);
       const achievements = await wrapLoading(appCtx, getFriendAchievements(friend), status);
       if (achievements) achievements.forEach((name) => transformedAchs[name]?.friends.push(friend));
-      console.log(achievements);
     }
 
     setPlayers(friends);

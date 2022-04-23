@@ -6,7 +6,7 @@ const ErrorComponent = () => {
   const ctx = useContext(AppContext);
 
   let body : JSX.Element|string|undefined;
-  console.warn(ctx.error, ctx.error instanceof Error);
+  console.warn('Error occured!', ctx.error);
   if (ctx.error != null && ctx.error instanceof Error) body = ctx.error.toString();
   else if (typeof ctx.error === 'string') body = ctx.error;
   else body = JSON.stringify(ctx.error);

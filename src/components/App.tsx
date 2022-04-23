@@ -4,6 +4,7 @@ import {FunctionalComponent} from "preact";
 import {AppState, IModule, PROJECT_ID} from "../types";
 import Loading from "./Loading";
 import Error from "./Error";
+import {getLogger} from "../logging";
 
 interface AppProps {
   modules: IModule[],
@@ -24,6 +25,8 @@ export const wrapLoading = <T,>(state: AppState, someJob: Promise<T>, loading: s
     .finally(() => state.setLoading(undefined));
 }
 
+const logger = getLogger('App');
+
 export const App : FunctionalComponent<AppProps> = (props) => {
 
   const [module, setModule] = useState<IModule|undefined>(undefined);
@@ -35,7 +38,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
   useEffect(() => {
     props.modules.forEach((module) => {
       if (!module.isEnabled()) return;
-      console.log('Enabled module: ', module.name);
+      logger.info('Enabled module: ', module.name);
       const domId = PROJECT_ID + '_' + module.id;
       if (document.querySelector('#' + domId)) return;
       const onShow = () => setModule(module)
