@@ -4,7 +4,8 @@ import {AppContext, wrapLoading} from "../../components/App";
 import {getGameInfo, getFriendsThatPlay, IWhoPlayed, getFriendAchievements} from "./tools";
 import styles from './component.module.scss';
 import {relativeURL} from "../../utils";
-import {getLogger} from "../../logging";
+import {getLogger} from "../../utils/logging";
+import {getLocalization} from "../../localization";
 
 const Entry : FunctionalComponent<{ach: IDisplayAchievement}> = (props) => {
   const ach = props.ach;
@@ -33,6 +34,7 @@ interface IDisplayAchievement {
 export type AchievementList = Record<string, IDisplayAchievement>;
 
 const logger = getLogger('CompareAchievements');
+const locale = getLocalization().modules.CompareAchievements;
 
 // TODO: Normal CSS for "All games" Steam page with height more then 5000px
 // Make normal modal?
@@ -47,14 +49,13 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
     const gameId = props.gameId;
     if (!gameId) throw new Error('Missing gameId!');
 
-    const gameInfo = await wrapLoading(appCtx, getGameInfo(gameId), 'Get game achievements...');
+    const gameInfo = await wrapLoading(appCtx, getGameInfo(gameId), locale.getAchievements);
     if (!gameInfo) return;
     logger.debug('Player:', gameInfo.player.name?.trim());
     logger.debug('Total achievements:', Object.keys(gameInfo.achievements).length);
 
     const friends = await wrapLoading(appCtx,
-      getFriendsThatPlay(relativeURL(gameInfo.player.url), gameId),
-      'Getting friends that play this game...');
+      getFriendsThatPlay(relativeURL(gameInfo.player.url), gameId), locale.getFriendsThatPlay);
     if (!friends) throw new Error('Impossible to find friends that play this game!');
     logger.debug('Friends with this game:', friends.length);
 
@@ -66,7 +67,7 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
     for (let i = 0; i < friends.length; i += 1) {
       const friend = friends[i];
-      const status = `[${i+1}/${friends.length}] Loading player: ${friend.name}`;
+      const status = `[${i+1}/${friends.length}] ${locale.loadingPlayer}: ${friend.name}`;
       logger.trace('Loading friend:', friend.name);
       const achievements = await wrapLoading(appCtx, getFriendAchievements(friend), status);
       if (achievements) achievements.forEach((name) => transformedAchs[name]?.friends.push(friend));
@@ -80,13 +81,13 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
 
   return (
     <div>
-      <h4 style="margin-bottom: 10px">Player with achievements:</h4>
+      <h4 style="margin-bottom: 10px">{locale.friendsAchievements}:</h4>
       {players.map((player, index) => (
         <a href={player.url} key={index} style="margin-right: 5px">
           <img src={player.avatar} alt="" title={player.name} />
         </a>
       ))}
-      <h4 style="margin-bottom: 10px">Achievements: </h4>
+      <h4 style="margin-bottom: 10px">{locale.achievements}: </h4>
       {Object.values(achievements).map((ach,index) => <Entry ach={ach} key={index} />)}
     </div>
   )

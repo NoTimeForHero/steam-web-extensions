@@ -4,7 +4,8 @@ import {FunctionalComponent} from "preact";
 import {AppState, IModule, PROJECT_ID} from "../types";
 import Loading from "./Loading";
 import Error from "./Error";
-import {getLogger} from "../logging";
+import {getLogger} from "../utils/logging";
+import {getLocalization} from "../localization";
 
 interface AppProps {
   modules: IModule[],
@@ -26,6 +27,7 @@ export const wrapLoading = <T,>(state: AppState, someJob: Promise<T>, loading: s
 }
 
 const logger = getLogger('App');
+const locale = getLocalization();
 
 export const App : FunctionalComponent<AppProps> = (props) => {
 
@@ -53,7 +55,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
           <div className={styles.header}>
               <div className={"btn_darkred_white_innerfade btn_medium noicon " + styles.button}
                   onClick={() => setModule(undefined)}>
-                  <span>X&nbsp;Close</span>
+                  <span>X&nbsp;{locale.generic.closeModal}</span>
               </div>
               <h1>{module.name}</h1>
           </div>

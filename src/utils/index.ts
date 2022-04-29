@@ -1,4 +1,4 @@
-import {IS_DEBUG} from "./types";
+import {IS_DEBUG} from "../types";
 
 export const getDocument = async(url: string, debugUrl: string) => {
   const parser = new DOMParser();

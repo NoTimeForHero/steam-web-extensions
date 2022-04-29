@@ -1,7 +1,8 @@
 import {IModule} from "../../types";
 import {Component} from "./component";
-import {getLogger} from "../../logging";
+import {getLogger} from "../../utils/logging";
 import {addDropdownLink, DropdownTarget, makeButton} from "../tools";
+import {getLocalization} from "../../localization";
 
 enum InjectCase {
   Unknown = 'Unknown',
@@ -11,11 +12,12 @@ enum InjectCase {
 }
 
 const logger = getLogger('CompareAchievements');
+const locale = getLocalization();
 
 class CompareAchievements implements IModule {
   // IModule
   id = 'compare_achievements';
-  name = 'Compare Achievements';
+  name = locale.modules.CompareAchievements.title;
   description = 'Compare achievements between friend';
   gameId : string|undefined;
   injectCase = InjectCase.Unknown;
@@ -32,7 +34,7 @@ class CompareAchievements implements IModule {
   constructor() {
     this.__onLocationMatch(InjectCase.FriendsThatPlay, /^\/id\/[^/]+\/friendsthatplay\/(\d+)\/?$/);
     this.__onLocationMatch(InjectCase.TotalAchievements, /^\/stats\/(\d+)\/achievements\/?$/);
-    this.__onLocationMatch(InjectCase.TotalAchievements, /^\/(?:id|profiles)\/[^\/]+\/stats\/(\d+)\/achievements\/?$/);
+    this.__onLocationMatch(InjectCase.TotalAchievements, /^\/(?:id|profiles)\/[^\/]+\/stats\/(\d+)(?:\/achievements)?\/?$/);
     this.__onLocationMatch(InjectCase.AllGames, /^\/(?:id|profiles)\/[^\/]+\/(games)\//, undefined);
   }
 
@@ -45,7 +47,7 @@ class CompareAchievements implements IModule {
 
     switch (this.injectCase) {
       case InjectCase.TotalAchievements: {
-        const button = makeButton(domId, onShow, 'Compare achievements');
+        const button = makeButton(domId, onShow, locale.modules.CompareAchievements.title);
         const root = document.querySelector('#mainContents')!;
         const header = document.querySelector<HTMLElement>('#subtabs')!;
         header.style.height = 'auto'; // Remove large padding
@@ -53,7 +55,7 @@ class CompareAchievements implements IModule {
         break;
       }
       case InjectCase.FriendsThatPlay:
-        const button = makeButton(domId, onShow, 'Compare achievements');
+        const button = makeButton(domId, onShow, locale.modules.CompareAchievements.title);
         document.querySelector('#memberList')?.prepend(button);
         break;
       case InjectCase.AllGames:
@@ -61,7 +63,7 @@ class CompareAchievements implements IModule {
           logger.trace('Open gameID', gameId);
           this.gameId = gameId;
           onShow();
-        }, 'SWE: Compare achievements');
+        }, 'SWE: ' + locale.modules.CompareAchievements.title);
         break;
       default:
         throw new Error(`Unknown inject case: ${this.injectCase}`)

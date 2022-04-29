@@ -1,5 +1,5 @@
 import icons from "../resources";
-import {getLogger} from "../logging";
+import {getLogger} from "../utils/logging";
 
 const logger = getLogger("Tools");
 
