@@ -77,7 +77,7 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
     setAchievements(transformedAchs);
   }
 
-  useEffect(() => { onInit().catch(appCtx.setError) }, []);
+  useEffect(() => { onInit().catch(appCtx.error[1]) }, []);
 
   return (
     <div>

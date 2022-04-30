@@ -12,18 +12,16 @@ interface AppProps {
 }
 
 export const AppContext = createContext<AppState>({
-  error: undefined,
-  loading: undefined,
-  setError: (_) => {},
-  setLoading: (_) => {}
+  error: [undefined, () => {}],
+  loading: [undefined, () => {}],
 });
 
 export const wrapLoading = <T,>(state: AppState, someJob: Promise<T>, loading: string|undefined = undefined) => {
-  state.setError(undefined);
-  state.setLoading(loading ?? 'Get some data...');
+  state.error[1](undefined);
+  state.loading[1](loading ?? 'Get some data...');
   return someJob
-    .catch(state.setError)
-    .finally(() => state.setLoading(undefined));
+    .catch(state.error[1])
+    .finally(() => state.loading[1](undefined));
 }
 
 const logger = getLogger('App');
@@ -34,7 +32,10 @@ export const App : FunctionalComponent<AppProps> = (props) => {
   const [module, setModule] = useState<IModule|undefined>(undefined);
   const [loading, setLoading] = useState<string|undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
-  const appState : AppState = { loading, setLoading, error, setError };
+  const appState : AppState = {
+    loading: [ loading, setLoading ],
+    error: [ error, setError ],
+  };
   const ModuleComponent = useMemo(() => module?.getComponent(), [module]);
 
   useEffect(() => {

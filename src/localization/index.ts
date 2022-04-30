@@ -11,7 +11,6 @@ const messagesByLocale = locales.reduce((acc, locale) => {
   return acc;
 }, {} as Record<string, MessagesType>)
 
-// TODO: Add ability to change language by user
 export const getLocalization = (): MessagesType => {
   const languages = navigator.languages.map((name) => name.toLowerCase());
   const target = languages.find((name) => name in messagesByLocale);
