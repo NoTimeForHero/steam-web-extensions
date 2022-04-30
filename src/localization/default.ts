@@ -1,4 +1,4 @@
-export const DefaultMessages = {
+const DefaultMessages = {
   generic: {
     closeModal: 'Close'
   },
@@ -19,4 +19,9 @@ export type MessagesType = typeof DefaultMessages;
 export type ILocalization = {
   names: string[],
   messages: MessagesType,
+}
+
+export const DefaultLocalization : ILocalization = {
+  names: ['default'],
+  messages: DefaultMessages,
 }

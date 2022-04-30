@@ -2,7 +2,7 @@ import {IModule} from "../../types";
 import {Component} from "./component";
 import {getLogger} from "../../utils/logging";
 import {addDropdownLink, DropdownTarget, makeButton} from "../tools";
-import {getLocalization} from "../../localization";
+import {unsafeGetLocalization} from "../../localization";
 
 enum InjectCase {
   Unknown = 'Unknown',
@@ -12,7 +12,8 @@ enum InjectCase {
 }
 
 const logger = getLogger('CompareAchievements');
-const locale = getLocalization();
+// TODO: Modify injector using React to fix scenario?
+const locale = unsafeGetLocalization();
 
 class CompareAchievements implements IModule {
   // IModule

@@ -5,7 +5,7 @@ import {getGameInfo, getFriendsThatPlay, IWhoPlayed, getFriendAchievements} from
 import styles from './component.module.scss';
 import {relativeURL} from "../../utils";
 import {getLogger} from "../../utils/logging";
-import {getLocalization} from "../../localization";
+import { useLocalization } from "../../localization";
 
 const Entry : FunctionalComponent<{ach: IDisplayAchievement}> = (props) => {
   const ach = props.ach;
@@ -34,7 +34,6 @@ interface IDisplayAchievement {
 export type AchievementList = Record<string, IDisplayAchievement>;
 
 const logger = getLogger('CompareAchievements');
-const locale = getLocalization().modules.CompareAchievements;
 
 // TODO: Normal CSS for "All games" Steam page with height more then 5000px
 // Make normal modal?
@@ -43,6 +42,7 @@ export const Component : FunctionalComponent<{gameId: string}> = (props) => {
   const appCtx = useContext(AppContext);
   const [achievements, setAchievements] = useState<AchievementList>({});
   const [players, setPlayers] = useState<IWhoPlayed[]>([]);
+  const locale = useLocalization().modules.CompareAchievements;
 
   const onInit = async() => {
 

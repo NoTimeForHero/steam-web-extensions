@@ -10,6 +10,7 @@ export interface IModule {
   getComponent: () => JSX.Element,
 }
 
+// TODO: Rewrite with ISetter<T>?
 export interface AppState {
   loading: string|undefined,
   setLoading: (value: string|undefined) => void,
@@ -20,3 +21,8 @@ export interface AppState {
 export interface ExtendedWindow extends Window {
   sha1?: (input: string) => string,
 }
+
+export type ISetter<T> = [
+  value: T|undefined,
+  setValue: (input: T) => void
+]

@@ -5,7 +5,7 @@ import {AppState, IModule, PROJECT_ID} from "../types";
 import Loading from "./Loading";
 import Error from "./Error";
 import {getLogger} from "../utils/logging";
-import {getLocalization} from "../localization";
+import {LocalizationProvider, useLocalization} from "../localization";
 
 interface AppProps {
   modules: IModule[],
@@ -27,7 +27,6 @@ export const wrapLoading = <T,>(state: AppState, someJob: Promise<T>, loading: s
 }
 
 const logger = getLogger('App');
-const locale = getLocalization();
 
 export const App : FunctionalComponent<AppProps> = (props) => {
 
@@ -36,6 +35,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
   const [error, setError] = useState<any>(undefined);
   const appState : AppState = { loading, setLoading, error, setError };
   const ModuleComponent = useMemo(() => module?.getComponent(), [module]);
+  const locale = useLocalization().generic;
 
   useEffect(() => {
     props.modules.forEach((module) => {
@@ -55,7 +55,7 @@ export const App : FunctionalComponent<AppProps> = (props) => {
           <div className={styles.header}>
               <div className={"btn_darkred_white_innerfade btn_medium noicon " + styles.button}
                   onClick={() => setModule(undefined)}>
-                  <span>X&nbsp;{locale.generic.closeModal}</span>
+                  <span>X&nbsp;{locale.closeModal}</span>
               </div>
               <h1>{module.name}</h1>
           </div>
@@ -67,3 +67,9 @@ export const App : FunctionalComponent<AppProps> = (props) => {
     </AppContext.Provider>
   )
 }
+
+export const WrappedApp : FunctionalComponent<AppProps> = (props) => (
+  <LocalizationProvider><App {...props} /></LocalizationProvider>
+)
+
+export default WrappedApp;

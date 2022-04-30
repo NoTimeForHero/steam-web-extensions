@@ -17,6 +17,6 @@ const RuMessages : MessagesType = {
 }
 
 export const RuLocalization : ILocalization = {
+  names: ['ru-ru', 'ru'],
   messages: RuMessages,
-  names: ['ru-ru', 'ru']
 }
