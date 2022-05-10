@@ -49,6 +49,10 @@ export const App : FunctionalComponent<AppProps> = (props) => {
     });
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflowY = module ? 'hidden' : '';
+  }, [module]);
+
   return (
     <AppContext.Provider value={appState}>
       <div>
